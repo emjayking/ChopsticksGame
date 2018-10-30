@@ -1,4 +1,5 @@
 # This is a version of the A.I that uses rules to choose the best move rather than hard coding
+import itertools
 
 class AI():
     """This is the class of the A.I that the player will play against. """
@@ -7,13 +8,23 @@ class AI():
         self._myHand = myHand
         self.start = start
 
-    def _calcOdds(self, state="destroy"):
+    def _calcMoves(self):
+        desCombos = []
         combos = []
-        for myHand in self._myHand:
-            for opHand in self._opHand:
-                if myHand + opHand == 5:
-                    combos.append([self._myHand.index(myHand), self.opHand.index(opHand)])
-        return combos
+        # loop through each combination of my hand and the enemy hand
+        # if that combination allows for the destruction of an opponenents hand
+        # append it to a list
+        for r in itertools.product(_myHand, _opHand):
+            if r[0] + r[1] >= 5:
+                desCombos.append(r)
+            elif r[0] + r[1] + r[0] < 5:
+                combos.append(r)
+
+        if len(desCombos) != 0:
+            return desCombos
+        else:
+            return combos.sort(key=combos[0] + combos[1])
+
 
 
     def attack(self):
@@ -24,5 +35,5 @@ class AI():
             return attacking
 
         else:
-            movesToDestroy = self._calcOdds(state="destroy")
-            if len(movesToDestroy) != 0:
+            movesToDestroy = self._calcMoves(state="destroy")
+            if len(movesToDestroy) != 0: # if we can't destroy an opponets hand
