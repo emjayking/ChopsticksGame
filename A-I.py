@@ -8,6 +8,9 @@ class AI():
         self._myHand = myHand
         self.start = start
 
+    def myKey(r):
+        return r[0] + r[1]
+
     def _calcMoves(self):
         desCombos = []
         combos = []
@@ -20,11 +23,24 @@ class AI():
             elif r[0] + r[1] + r[0] < 5:
                 combos.append(r)
 
-        if len(desCombos) != 0:
-            return desCombos
-        else:
-            return combos.sort(key=combos[0] + combos[1])
+        if len(desCombos) != 0: # if we can destroy an opponents hand
+            return desCombos # return the list of possible moves
+        else: #if we can't destroy an opponets hand then choose the move that is the strongest
+            return combos.sort(key=myKey, reverse=True)
 
+
+    def passMove(self):
+        # figure out which hand is dead
+        # figure out what the split ratio is
+        # return the split hand
+        if self._myHand[0] == 0:
+            self._myHand[0] = self._myHand[1] // 2
+            self._myHand[1] -= self.myhand[1] // 2
+        elif self._myHand[1] == 1:
+            self._myHand[1] = self._myHand[0] // 2
+            self._myHand[0] -= self.myhand[0] // 2
+        else:
+            return False
 
 
     def attack(self):
@@ -35,5 +51,7 @@ class AI():
             return attacking
 
         else:
-            movesToDestroy = self._calcMoves(state="destroy")
-            if len(movesToDestroy) != 0: # if we can't destroy an opponets hand
+            movesToDestroy = self._calcMoves()
+            if len(movesToDestroy) != 0: # if we can destroy an opponets hand
+                return desCombos[0]
+            else:
